@@ -19,7 +19,15 @@ def submit_student_grade():
     return "Data submitted successfully!" 
     # return name
 
-    
+@app.route('/submittodoitem', methods=['POST'])
+def submit_todo_item():
+    form_data = dict(request.form)
+    response = requests.post(
+        'http://localhost:9000/submittodoitem',
+        json=form_data,
+    )
+    return "Todo item submitted successfully!"
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)

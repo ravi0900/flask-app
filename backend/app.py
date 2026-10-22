@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from collections.abc import Mapping
 import os
 import pymongo
 app = Flask(__name__)
@@ -12,6 +13,7 @@ load_dotenv()
 client = pymongo.MongoClient(os.getenv('URI'))
 db= client.test
 collection = db['student_grades_db']
+todo_collection = db['todo_items']
 
 @app.route('/')
 def home():
@@ -24,18 +26,18 @@ def get_student_grades():
         "Ravi": 80,
         "Ramesh": 70,
         "Suresh": 60,
-	      "Harish":90
+	    "Harish":90
     }
     return jsonify(dict_stuent_grade)
 
 @app.route('/view')
 def view_student_grades():
-    data = collection.find()
-    data = list(data)
-    for item in data:
-        print(item)
-        del item['_id']  # Remove the '_id' field from each document
-    return jsonify(data)
+    students = list(collection.find({}, {'_id': 0}))
+    todo_items = list(todo_collection.find({}, {'_id': 0}))
+    return jsonify({
+        "students": students,
+        "todoItems": todo_items,
+    })
 
 @app.route('/submit', methods=['POST'])
 def submit_student_grade():
@@ -43,6 +45,25 @@ def submit_student_grade():
     # print(form_data)
     collection.insert_one(form_data)
     return jsonify({"message": "Data submitted successfully!"})
+
+@app.route('/submittodoitem', methods=['POST'])
+def submit_todo_item():
+    data = request.get_json(silent=True) if request.is_json else request.form
+    if not isinstance(data, Mapping):
+        return jsonify({"error": "A JSON object or form data is required."}), 400
+
+    item_name = data.get('itemName')
+    item_description = data.get('itemDescription')
+    if not isinstance(item_name, str) or not item_name.strip():
+        return jsonify({"error": "itemName is required."}), 400
+    if not isinstance(item_description, str) or not item_description.strip():
+        return jsonify({"error": "itemDescription is required."}), 400
+
+    todo_collection.insert_one({
+        "itemName": item_name.strip(),
+        "itemDescription": item_description.strip(),
+    })
+    return jsonify({"message": "To-do item submitted successfully!"}), 201
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=9000)
