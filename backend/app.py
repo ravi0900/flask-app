@@ -19,11 +19,12 @@ def home():
 
 @app.route('/api')
 def get_student_grades():
-    dict_stuent_grade = {
-        #"Anjali": 90,
+    dict_student_grade = {
+        #"Anjali": 80,
         "Ravi": 80,
         "Ramesh": 70,
-        "Suresh": 60
+        "Suresh": 60,
+	      "Harish":90
     }
     return jsonify(dict_stuent_grade)
 
