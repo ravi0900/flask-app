@@ -3,49 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-</head>
-<body>
+    <title>Student Records &amp; To-Do</title>
     <style>
-        body {
+        :root {
+            color-scheme: light;
             font-family: Arial, sans-serif;
-            max-width: 600px;
+            color: #172033;
+            background: #f3f6fb;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 48px 20px;
+        }
+        main {
+            width: min(100%, 620px);
             margin: 0 auto;
-            padding: 20px;
         }
-        form {
-            display: flex;
-            flex-direction: column;
+        .page-heading {
+            margin-bottom: 24px;
         }
-        label {
-            margin-bottom: 5px;
+        .page-heading p,
+        .panel-intro {
+            color: #647086;
         }
-        input {
-            margin-bottom: 10px;
+        h1 {
+            margin: 0 0 8px;
+            font-size: clamp(1.75rem, 5vw, 2.25rem);
+        }
+        .page-heading p {
+            margin: 0;
+        }
+        .card {
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid #e1e7f0;
+            border-radius: 14px;
+            box-shadow: 0 12px 32px rgb(34 54 89 / 8%);
+        }
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
             padding: 8px;
+            background: #f8faff;
+            border-bottom: 1px solid #e7ecf4;
         }
-        button {
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
+        .tab {
+            padding: 12px 14px;
+            color: #647086;
+            background: transparent;
+            border: 0;
+            border-radius: 8px;
+            font: inherit;
+            font-weight: 600;
             cursor: pointer;
         }
+        .tab[aria-selected="true"] {
+            color: #174ea6;
+            background: #e8f0fe;
+        }
+        .tab:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible,
+        .submit-button:focus-visible {
+            outline: 3px solid #9bbcf5;
+            outline-offset: 2px;
+        }
+        .panel {
+            padding: 28px;
+        }
+        .panel[hidden] {
+            display: none;
+        }
+        h2 {
+            margin: 0 0 8px;
+            font-size: 1.35rem;
+        }
+        .panel-intro {
+            margin: 0 0 24px;
+            line-height: 1.5;
+        }
+        form {
+            display: grid;
+            gap: 8px;
+        }
+        label {
+            margin-top: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            color: inherit;
+            background: #fff;
+            border: 1px solid #cbd3df;
+            border-radius: 8px;
+            font: inherit;
+        }
+        input::placeholder,
+        textarea::placeholder {
+            color: #929cad;
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .submit-button {
+            margin-top: 16px;
+            padding: 12px 16px;
+            color: #fff;
+            background: #2463eb;
+            border: 0;
+            border-radius: 8px;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .submit-button:hover {
+            background: #174fc5;
+        }
+        .time {
+            margin: 20px 0 0;
+            color: #788398;
+            font-size: 0.85rem;
+            text-align: right;
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 28px 14px;
+            }
+            .panel {
+                padding: 22px 18px;
+            }
+            .tab {
+                padding: 11px 8px;
+                font-size: 0.9rem;
+            }
+        }
     </style>
+</head>
+<body>
+    <main>
+        <header class="page-heading">
+            <h1>Workspace</h1>
+            <p>Manage student records and keep track of your tasks.</p>
+        </header>
 
-    <p>Time: {{ current_time }}</p>
+        <section class="card" aria-label="Workspace forms">
+            <div class="tabs" role="tablist" aria-label="Workspace sections">
+                <button class="tab" id="student-tab" type="button" role="tab"
+                        aria-selected="true" aria-controls="student-panel" tabindex="0">
+                    Student Records
+                </button>
+                <button class="tab" id="todo-tab" type="button" role="tab"
+                        aria-selected="false" aria-controls="todo-panel" tabindex="-1">
+                    Add To-Do Task
+                </button>
+            </div>
 
-    <form action="/submit" method="post">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-        <br>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <br>
-        <label for="grade">Grade:</label>
-        <input type="number" id="grade" name="grade" required>
-        <br>
-        <button type="submit">Submit</button>
-    </form>
+            <section class="panel" id="student-panel" role="tabpanel"
+                     aria-labelledby="student-tab">
+                <h2>Student Records</h2>
+                <p class="panel-intro">Enter a student's details to add a record.</p>
+                <form action="/submit" method="post">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="e.g. Alex Morgan" required>
+
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="name@example.com" required>
+
+                    <label for="grade">Grade</label>
+                    <input type="number" id="grade" name="grade" placeholder="Enter grade" required>
+
+                    <button class="submit-button" type="submit">Save Student Record</button>
+                </form>
+            </section>
+
+            <section class="panel" id="todo-panel" role="tabpanel"
+                     aria-labelledby="todo-tab" hidden>
+                <h2>Add To-Do Task</h2>
+                <p class="panel-intro">Capture a task and a short description.</p>
+                <form action="/submit" method="post">
+                    <label for="item-name">Item Name</label>
+                    <input type="text" id="item-name" name="item_name"
+                           placeholder="e.g. Prepare class materials" required>
+
+                    <label for="item-description">Item Description</label>
+                    <textarea id="item-description" name="item_description"
+                              placeholder="Add details about this task" required></textarea>
+
+                    <button class="submit-button" type="submit">Add To-Do Task</button>
+                </form>
+            </section>
+        </section>
+
+        <p class="time">Time: {{ current_time }}</p>
+    </main>
+
+    <script>
+        const tabs = document.querySelectorAll('[role="tab"]');
+        const panels = document.querySelectorAll('[role="tabpanel"]');
+
+        function activateTab(selectedTab, moveFocus = false) {
+            tabs.forEach((tab) => {
+                const isSelected = tab === selectedTab;
+                tab.setAttribute('aria-selected', String(isSelected));
+                tab.tabIndex = isSelected ? 0 : -1;
+            });
+            panels.forEach((panel) => {
+                panel.hidden = panel.id !== selectedTab.getAttribute('aria-controls');
+            });
+            if (moveFocus) {
+                selectedTab.focus();
+            }
+        }
+
+        tabs.forEach((tab, index) => {
+            tab.addEventListener('click', () => activateTab(tab));
+            tab.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    const direction = event.key === 'ArrowRight' ? 1 : -1;
+                    const nextTab = tabs[(index + direction + tabs.length) % tabs.length];
+                    activateTab(nextTab, true);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
