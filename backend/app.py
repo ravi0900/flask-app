@@ -24,7 +24,7 @@ def get_student_grades():
         "Ravi": 80,
         "Ramesh": 70,
         "Suresh": 60,
-	"Harish":90
+	      "Harish":90
     }
     return jsonify(dict_stuent_grade)
 
