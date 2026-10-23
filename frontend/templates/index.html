@@ -134,6 +134,10 @@
             font-size: 0.85rem;
             text-align: right;
         }
+        .error {
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
         @media (max-width: 480px) {
             body {
                 padding: 28px 14px;
@@ -180,6 +184,10 @@
 
                     <label for="grade">Grade</label>
                     <input type="number" id="grade" name="grade" placeholder="Enter grade" required>
+
+                    {% if error %}
+                    <p class="error" role="alert">{{ error }}</p>
+                    {% endif %}
 
                     <button class="submit-button" type="submit">Save Student Record</button>
                 </form>
