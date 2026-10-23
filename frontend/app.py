@@ -13,11 +13,27 @@ def home():
 @app.route('/submit' , methods=['POST'])
 def submit_student_grade():
     form_data = dict(request.form)
-    
-    requests.post('http://localhost:9000/submit', json=form_data)
-    # Process the submitted data (e.g., save to database)
-    return "Data submitted successfully!" 
-    # return name
+    try:
+        response = requests.post('http://localhost:9000/submit', json=form_data, timeout=5)
+    except requests.RequestException:
+        return render_template(
+            'index.html',
+            current_time=datetime.datetime.now(),
+            form_data=form_data,
+            error='Could not submit your information right now. Please try again.',
+        ), 502
+
+    if response.status_code == 409:
+        return render_template(
+            'index.html',
+            current_time=datetime.datetime.now(),
+            form_data=form_data,
+            error='This email has already been submitted.',
+        ), 409
+
+    response.raise_for_status()
+    return "Data submitted successfully"
+
 
 @app.route('/submittodoitem', methods=['POST'])
 def submit_todo_item():

@@ -1,3 +1,4 @@
+import re
 from flask import Flask, jsonify, request
 from collections.abc import Mapping
 import os
@@ -22,13 +23,13 @@ def home():
 @app.route('/api')
 def get_student_grades():
     dict_student_grade = {
-        #"Anjali": 80,
+        "Anjali": 80,
         "Ravi": 80,
         "Ramesh": 70,
         "Suresh": 60,
 	    "Harish":90
     }
-    return jsonify(dict_stuent_grade)
+    return jsonify(dict_student_grade)
 
 @app.route('/view')
 def view_student_grades():
@@ -43,6 +44,9 @@ def view_student_grades():
 def submit_student_grade():
     form_data = request.get_json()
     # print(form_data)
+    email = str(form_data.get('email', '')).strip()
+    if collection.find_one({'email': {'$regex': f'^{re.escape(email)}$', '$options': 'i'}}):
+        return jsonify({"message": "This email has already been submitted."}), 409
     collection.insert_one(form_data)
     return jsonify({"message": "Data submitted successfully!"})
 
