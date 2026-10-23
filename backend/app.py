@@ -73,6 +73,9 @@ def submit_todo_item():
         "_id": item_id,
         "itemId": str(item_id),
         "itemUUID": str(uuid.uuid4()),
+        "itemHash": hashlib.sha256(
+            f"{item_name}\0{item_description}".encode("utf-8")
+        ).hexdigest(),
         "itemName": item_name,
         "itemDescription": item_description,
     }
