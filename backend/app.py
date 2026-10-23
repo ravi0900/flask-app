@@ -72,6 +72,7 @@ def submit_todo_item():
     todo_item = {
         "_id": item_id,
         "itemId": str(item_id),
+        "itemUUID": str(uuid.uuid4()),
         "itemName": item_name,
         "itemDescription": item_description,
     }
