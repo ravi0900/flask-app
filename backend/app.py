@@ -63,10 +63,21 @@ def submit_todo_item():
     if not isinstance(item_description, str) or not item_description.strip():
         return jsonify({"error": "itemDescription is required."}), 400
 
-    todo_collection.insert_one({
-        "itemName": item_name.strip(),
-        "itemDescription": item_description.strip(),
-    })
+    item_name = item_name.strip()
+    item_description = item_description.strip()
+    item_id = ObjectId()
+    todo_item = {
+        "_id": item_id,
+        "itemId": str(item_id),
+        "itemUUID": str(uuid.uuid4()),
+        "itemHash": hashlib.sha256(
+            f"{item_name}\0{item_description}".encode("utf-8")
+        ).hexdigest(),
+        "itemName": item_name,
+        "itemDescription": item_description,
+    }
+
+    todo_collection.insert_one(todo_item)
     return jsonify({"message": "To-do item submitted successfully!"}), 201
 
 if __name__ == '__main__':
